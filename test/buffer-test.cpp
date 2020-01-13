@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <glow/GlBuffer.h>
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 #include <random>
 #include "test_utils.h"
 

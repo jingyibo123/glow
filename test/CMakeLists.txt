@@ -12,6 +12,9 @@ add_executable(${TEST_BINARY}
 )
 
 
-target_link_libraries(${TEST_BINARY} ${GTEST_MAIN_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glow glow_util)
+target_link_libraries(${TEST_BINARY} ${GTEST_BOTH_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} glow glow_util)
+if (UNIX)
+  target_link_libraries(${TEST_BINARY} pthread)
+endif (UNIX)
 
 add_test(${TEST_BINARY} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TEST_BINARY})

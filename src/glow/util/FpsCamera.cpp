@@ -2,6 +2,7 @@
 #include "FpsCamera.h"
 #include <glow/glutil.h>
 #include <iostream>
+#include "glow/util/math.h"
 
 namespace glow {
 

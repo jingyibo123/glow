@@ -2,7 +2,7 @@
 #define INCLUDE_RV_GLUTIL_H_
 
 #include <cmath>
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 #include <ostream>
 
 /** \brief some utility functions and classes. **/

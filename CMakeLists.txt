@@ -2,22 +2,16 @@ cmake_minimum_required(VERSION 3.2.3)
 
 project(glow)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules)
+
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(Boost REQUIRED COMPONENTS filesystem system)
 find_package(X11)
+find_package(Eigen REQUIRED)
 
-find_package(catkin)
-
-if(catkin_FOUND)
-  catkin_package(
-    INCLUDE_DIRS src/
-    LIBRARIES glow glow_util
-    CFG_EXTRAS GlowShaderCompilation.cmake GenCppFile.cmake
-  )
-endif()
-
-include_directories(${catkin_INCLUDE_DIRS} src/)
+include_directories(${GLEW_INCLUDE_DIRS})
+include_directories(${EIGEN_INCLUDE_DIRS})
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
   set(CMAKE_CXX_FLAGS "-std=c++11 -g2 -DDEBUG ${CMAKE_CXX_FLAGS}")
@@ -66,6 +60,7 @@ if(X11_FOUND)
     src/glow/util/RandomColorGenerator.cpp
     src/glow/util/X11OffscreenContext.cpp)
 
+  target_include_directories(glow_util PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
   target_link_libraries(glow_util ${X11_LIBRARIES} ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
 
 else()
@@ -75,25 +70,29 @@ else()
     src/glow/util/FpsCamera.cpp
     src/glow/util/RandomColorGenerator.cpp)
 
+  target_include_directories(glow_util PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
   target_link_libraries(glow_util ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES})
 endif()
 
+target_include_directories(glow PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries(glow ${OPENGL_LIBRARIES} ${GLEW_LIBRARIES} ${Boost_LIBRARIES})
 
 if(NOT GTEST_FOUND)
+  find_package(GTest)
+  IF(NOT GTEST_FOUND)
+    IF(IS_DIRECTORY "/usr/src/gtest/")
+      MESSAGE(STATUS "Found google test sources in /usr/src/gtest/")
 
-  IF(IS_DIRECTORY "/usr/src/gtest/")
-    MESSAGE(STATUS "Found google test sources in /usr/src/gtest/")
+      ADD_SUBDIRECTORY(/usr/src/gtest/gtest)
 
-    ADD_SUBDIRECTORY(/usr/src/gtest/ gtest)
-
-    # mimick the behaviour of find_package(GTest)
-    SET(GTEST_FOUND TRUE)
-    SET(GTEST_BOTH_LIBRARIES gtest gtest_main)
-    SET(GTEST_LIBRARIES gtest)
-    SET(GTEST_MAIN_LIBRARIES gtest_main)
-  ELSE()
-    find_package(GTest)
+      # mimick the behaviour of find_package(GTest)
+      SET(GTEST_FOUND TRUE)
+      SET(GTEST_BOTH_LIBRARIES gtest gtest_main)
+      SET(GTEST_LIBRARIES gtest)
+      SET(GTEST_MAIN_LIBRARIES gtest_main)
+    ELSE()
+      MESSAGE(WARNING "Unable to find GTEST")
+    ENDIF()
   ENDIF()
 endif()
 

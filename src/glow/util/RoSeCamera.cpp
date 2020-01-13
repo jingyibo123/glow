@@ -1,6 +1,8 @@
 #include "RoSeCamera.h"
 #include "glow/glutil.h"
 
+#include "glow/util/math.h"
+
 namespace glow {
 
 const Eigen::Matrix4f& RoSeCamera::matrix() {
